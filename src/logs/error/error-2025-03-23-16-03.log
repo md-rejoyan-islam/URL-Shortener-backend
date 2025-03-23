@@ -1,0 +1,2 @@
+Sun Mar 23 2025 16:3:31  [error] : [7m[31m[1mOperation `users.find()` buffering timed out after 10000ms[22m[39m[27m
+Sun Mar 23 2025 16:3:39  [error] : [7m[31m[1mgetaddrinfo EAI_AGAIN mongodb[22m[39m[27m
