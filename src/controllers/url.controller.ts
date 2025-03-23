@@ -11,17 +11,19 @@ import {
 } from "../services/url.service";
 import { RequestWithUser } from "../types/types";
 
-export const getAllUrls = asyncHandler(async (_req: Request, res: Response) => {
-  const urls = await getAllUrlsService;
+export const getAllUrls = asyncHandler(
+  async (req: RequestWithUser, res: Response) => {
+    const urls = await getAllUrlsService(req?.me?.id);
 
-  successResponse(res, {
-    statusCode: 200,
-    message: "URLs fetched successfully",
-    payload: {
-      data: urls,
-    },
-  });
-});
+    successResponse(res, {
+      statusCode: 200,
+      message: "URLs fetched successfully",
+      payload: {
+        data: urls,
+      },
+    });
+  }
+);
 
 export const createShortUrl = asyncHandler(
   async (req: RequestWithUser, res: Response) => {
@@ -41,9 +43,9 @@ export const createShortUrl = asyncHandler(
 );
 
 export const getSingleShortUrl = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: RequestWithUser, res: Response) => {
     const { shortUrl } = req.params;
-    const url = await getSingleShortUrlService(shortUrl);
+    const url = await getSingleShortUrlService(shortUrl, req?.me?.id);
 
     successResponse(res, {
       statusCode: 200,
@@ -61,30 +63,39 @@ export const redirectUrl = asyncHandler(async (req: Request, res: Response) => {
   res.redirect(url.originalUrl);
 });
 
-export const deleteUrl = asyncHandler(async (req: Request, res: Response) => {
-  const { shortUrl } = req.params;
+export const deleteUrl = asyncHandler(
+  async (req: RequestWithUser, res: Response) => {
+    const { shortUrl } = req.params;
 
-  const url = await deleteUrlService(shortUrl);
+    const url = await deleteUrlService(shortUrl, req?.me?.id);
 
-  successResponse(res, {
-    statusCode: 200,
-    message: "URL deleted successfully",
-    payload: {
-      data: url,
-    },
-  });
-});
+    successResponse(res, {
+      statusCode: 200,
+      message: "URL deleted successfully",
+      payload: {
+        data: url,
+      },
+    });
+  }
+);
 
-export const updateUrl = asyncHandler(async (req: Request, res: Response) => {
-  const { url } = req.params;
-  const { originalUrl, shortUrl } = req.body;
+export const updateUrl = asyncHandler(
+  async (req: RequestWithUser, res: Response) => {
+    const { url } = req.params;
+    const { originalUrl, shortUrl } = req.body;
 
-  const newUrl = await updateUrlService(url, shortUrl, originalUrl);
-  successResponse(res, {
-    statusCode: 200,
-    message: "URL updated successfully",
-    payload: {
-      data: newUrl,
-    },
-  });
-});
+    const newUrl = await updateUrlService(
+      url,
+      shortUrl,
+      originalUrl,
+      req?.me?.id
+    );
+    successResponse(res, {
+      statusCode: 200,
+      message: "URL updated successfully",
+      payload: {
+        data: newUrl,
+      },
+    });
+  }
+);

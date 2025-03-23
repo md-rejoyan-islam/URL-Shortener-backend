@@ -1,11 +1,17 @@
 import { Request } from "express";
 import geoip from "geoip-lite";
 import createError from "http-errors";
+import isAuthorized from "../helper/authorize";
 import generateRandomId from "../helper/random-id";
 import urlModel from "../models/url.model";
+import { IUrl } from "../types/types";
 
-export const getAllUrlsService = async () => {
-  return await urlModel.find().sort({ createdAt: -1 });
+export const getAllUrlsService = async (id: string | undefined) => {
+  return await urlModel
+    .find({
+      user: id,
+    })
+    .sort({ createdAt: -1 });
 };
 
 export const createShortUrlService = async (
@@ -30,14 +36,24 @@ export const createShortUrlService = async (
   return result;
 };
 
-export const getSingleShortUrlService = async (shortUrl: string) => {
-  const url = await urlModel.find({ shortUrl: { $eq: shortUrl } });
+export const getSingleShortUrlService = async (
+  shortUrl: string,
+  userId: string | undefined
+) => {
+  const url: IUrl | null = await urlModel.findOne({
+    shortUrl: { $eq: shortUrl },
+  });
 
   if (!url) {
     throw createError.NotFound("Short URL not found");
-  }
+  } else {
+    const id = url?.user?.toString();
+    if (!id || !userId || !isAuthorized(id, userId)) {
+      throw createError.Unauthorized("Unauthorized");
+    }
 
-  return url;
+    return url;
+  }
 };
 
 export const redirectUrlService = async (req: Request) => {
@@ -78,20 +94,29 @@ export const redirectUrlService = async (req: Request) => {
   return url;
 };
 
-export const deleteUrlService = async (shortUrl: string) => {
+export const deleteUrlService = async (
+  shortUrl: string,
+  userId: string | undefined
+) => {
   const url = await urlModel.findOneAndDelete({ shortUrl });
 
   if (!url) {
     throw createError.NotFound("URL not found");
-  }
+  } else {
+    const id = url?.user?.toString();
+    if (!id || !userId || !isAuthorized(id, userId)) {
+      throw createError.Unauthorized("Unauthorized");
+    }
 
-  return url;
+    return url;
+  }
 };
 
 export const updateUrlService = async (
   url: string,
   shortUrl: string,
-  originalUrl: string
+  originalUrl: string,
+  userId: string | undefined
 ) => {
   const newUrl = await urlModel.findOneAndUpdate(
     { shortUrl: url },
@@ -101,7 +126,12 @@ export const updateUrlService = async (
 
   if (!newUrl) {
     throw createError.NotFound("URL not found");
-  }
+  } else {
+    const id = newUrl?.user?.toString();
+    if (!id || !userId || !isAuthorized(id, userId)) {
+      throw createError.Unauthorized("Unauthorized");
+    }
 
-  return newUrl;
+    return newUrl;
+  }
 };
