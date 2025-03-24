@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
+import asyncHandler from "express-async-handler";
+import { setCookie } from "../helper/cookies";
 import { successResponse } from "../helper/response-handler";
-import {
-  loginService,
-  meService,
-  registerService,
-} from "../services/auth.service";
+import { loginService, registerService } from "../services/auth.service";
 import { RequestWithUser } from "../types/types";
 
-export const register = async (req: Request, res: Response) => {
-  const user = await registerService(req);
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const { username, email, password } = req.body;
+  const user = await registerService(username, email, password);
 
   successResponse(res, {
     statusCode: 201,
@@ -17,22 +16,32 @@ export const register = async (req: Request, res: Response) => {
       data: user,
     },
   });
-};
+});
 
-export const login = async (req: Request, res: Response) => {
-  const token = await loginService(req);
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const { token, user } = await loginService(email, password);
+
+  // cookies set
+  setCookie({
+    res,
+    cookieName: "token",
+    cookieValue: await token,
+    maxAge: 3600 * 24 * 7,
+  });
 
   successResponse(res, {
     statusCode: 200,
     message: "Successfully Login",
     payload: {
       token,
+      user: user,
     },
   });
-};
+});
 
-export const me = async (req: RequestWithUser, res: Response) => {
-  const user = req?.me && (await meService(req?.me.id));
+export const me = asyncHandler(async (req: RequestWithUser, res: Response) => {
+  const user = req?.me;
 
   successResponse(res, {
     statusCode: 200,
@@ -41,4 +50,4 @@ export const me = async (req: RequestWithUser, res: Response) => {
       data: user,
     },
   });
-};
+});

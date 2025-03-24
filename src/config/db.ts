@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
-import { log } from "node:console";
 import { errorLogger, logger } from "../helper/logger";
 import { mongoUri } from "./secret";
 
 const connectDB = async () => {
   try {
-    log(mongoUri);
     const connect = await mongoose.connect(mongoUri, {
       connectTimeoutMS: 3000,
     });

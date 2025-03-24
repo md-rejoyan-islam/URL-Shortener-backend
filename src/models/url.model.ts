@@ -1,10 +1,16 @@
 import mongoose from "mongoose";
+import { serverUrl } from "../config/secret";
 
 const urlSchema = new mongoose.Schema(
   {
     originalUrl: {
       type: String,
       required: true,
+    },
+    shortId: {
+      type: String,
+      required: true,
+      unique: true,
     },
     shortUrl: {
       type: String,
@@ -16,7 +22,9 @@ const urlSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
-
+    qrCodeUrl: {
+      type: String,
+    },
     clicks: [
       {
         timestamp: {
@@ -44,5 +52,13 @@ const urlSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// pre save hook to generate qr code url
+urlSchema.pre("save", function (next) {
+  this.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${
+    serverUrl + "/" + this.shortId
+  }`;
+  next();
+});
 
 export default mongoose.model("Url", urlSchema);

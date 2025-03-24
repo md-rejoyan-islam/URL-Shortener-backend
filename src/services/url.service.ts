@@ -1,6 +1,7 @@
 import { Request } from "express";
 import geoip from "geoip-lite";
 import createError from "http-errors";
+import { serverUrl } from "../config/secret";
 import isAuthorized from "../helper/authorize";
 import generateRandomId from "../helper/random-id";
 import urlModel from "../models/url.model";
@@ -16,20 +17,33 @@ export const getAllUrlsService = async (id: string | undefined) => {
 
 export const createShortUrlService = async (
   originalUrl: string,
-  shortUrl: string,
+  customAlias: string,
   userId: string | undefined
 ) => {
-  if (shortUrl) {
-    const exist = await urlModel.exists({ shortUrl });
+  const existOriginalUrl = await urlModel.findOne({
+    originalUrl: { $eq: originalUrl },
+  });
+
+  if (existOriginalUrl) {
+    return existOriginalUrl;
+  }
+
+  if (customAlias) {
+    console.log("customAlias" + customAlias);
+
+    const exist = await urlModel.exists({ shortId: customAlias });
 
     if (exist) {
       throw createError.Conflict("Short URL already exists");
     }
   }
 
+  const shortId = customAlias || generateRandomId(6);
+
   const result = await urlModel.create({
     originalUrl,
-    shortUrl: shortUrl || generateRandomId(6),
+    shortUrl: serverUrl + "/" + shortId,
+    shortId: shortId,
     user: userId || null,
   });
 
@@ -57,12 +71,13 @@ export const getSingleShortUrlService = async (
 };
 
 export const redirectUrlService = async (req: Request) => {
-  const { shortUrl } = req.params;
+  const { shortId } = req.params;
+
   const ip = req.ip as string;
   const geo = geoip.lookup(ip);
 
   const url = await urlModel.findOneAndUpdate(
-    { shortUrl },
+    { shortId },
     {
       $push: {
         clicks: {
@@ -95,10 +110,10 @@ export const redirectUrlService = async (req: Request) => {
 };
 
 export const deleteUrlService = async (
-  shortUrl: string,
+  id: string,
   userId: string | undefined
 ) => {
-  const url = await urlModel.findOneAndDelete({ shortUrl });
+  const url = await urlModel.findByIdAndDelete(id);
 
   if (!url) {
     throw createError.NotFound("URL not found");

@@ -1,13 +1,14 @@
-import { Request } from "express";
 import createError from "http-errors";
 import { jwtSecret } from "../config/secret";
 import createJWT from "../helper/create-jwt";
 import hashedPassword, { isMatchedPassword } from "../helper/hash-password";
 import userModel from "../models/user.model";
 
-export const registerService = async (req: Request) => {
-  const { username, email, password } = req.body;
-
+export const registerService = async (
+  username: string,
+  email: string,
+  password: string
+) => {
   const exist = await userModel.exists({ email });
 
   if (exist) throw createError.Conflict("Already have an account.");
@@ -21,8 +22,7 @@ export const registerService = async (req: Request) => {
   return user;
 };
 
-export const loginService = async (req: Request) => {
-  const { email, password } = req.body;
+export const loginService = async (email: string, password: string) => {
   const user = await userModel.findOne({ email });
 
   if (!user || !(await isMatchedPassword(password, user.password))) {
@@ -30,14 +30,10 @@ export const loginService = async (req: Request) => {
   }
 
   const token = createJWT(
-    { id: user._id, username: user.username },
+    { username: user.username, email: user.email },
     jwtSecret,
     3600
   );
 
-  return token;
-};
-
-export const meService = async (id: string) => {
-  return await userModel.findById(id).select("-password");
+  return { token, user };
 };

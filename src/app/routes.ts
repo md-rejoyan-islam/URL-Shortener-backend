@@ -5,6 +5,7 @@ import { successResponse } from "../helper/response-handler";
 import errorHandler from "../middlewares/errorHandler";
 import authRouter from "../routes/auth.route";
 import seedRouter from "../routes/seed,route";
+import urlRouter from "../routes/url.route";
 
 const route = express();
 
@@ -22,7 +23,7 @@ route.get("/health", (_req: Request, res: Response) => {
   });
 });
 
-route.get("/:shortUrl", redirectUrl);
+route.get("/:shortId", redirectUrl);
 
 const routes = [
   {
@@ -32,6 +33,10 @@ const routes = [
   {
     path: "seeds",
     route: seedRouter,
+  },
+  {
+    path: "urls",
+    route: urlRouter,
   },
 ];
 
