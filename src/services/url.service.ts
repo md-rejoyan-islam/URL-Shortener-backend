@@ -1,7 +1,7 @@
 import { Request } from "express";
 import geoip from "geoip-lite";
 import createError from "http-errors";
-import { serverUrl } from "../config/secret";
+import { clientUrl, serverUrl } from "../config/secret";
 import isAuthorized from "../helper/authorize";
 import generateRandomId from "../helper/random-id";
 import urlModel from "../models/url.model";
@@ -100,11 +100,7 @@ export const redirectUrlService = async (req: Request) => {
     { new: true }
   );
 
-  if (!url) {
-    throw createError.NotFound("URL not found");
-  }
-
-  return url;
+  return url ? url?.originalUrl : clientUrl;
 };
 
 export const deleteUrlService = async (

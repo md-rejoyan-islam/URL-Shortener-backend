@@ -18,3 +18,6 @@ export const serverUrl: string =
   process.env.SERVER_URL || "https://url-shortener-server-hpvc.onrender.com";
 
 export const jwtExpiresIn: number = +(process.env.JWT_EXPIRES_IN || 2592000);
+
+export const clientUrl =
+  process.env.CLIENT_URL || "https://url-shortener-cliient-app.vercel.app";

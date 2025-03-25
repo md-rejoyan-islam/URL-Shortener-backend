@@ -63,7 +63,7 @@ export const getSingleShortUrl = asyncHandler(
 export const redirectUrl = asyncHandler(async (req: Request, res: Response) => {
   const url = await redirectUrlService(req);
 
-  res.redirect(url.originalUrl);
+  res.redirect(url);
 });
 
 export const deleteUrl = asyncHandler(
