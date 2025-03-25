@@ -27,7 +27,7 @@ export const setCookie = ({
     httpOnly: true,
     maxAge,
     secure: nodeEnv === "production", // only https
-    sameSite: "lax", // when use cross site
-    // sameSite: nodeEnv === "development" ? "strict" : "none", // when use cross site,
+    // sameSite: "lax", // when use cross site
+    sameSite: nodeEnv === "development" ? "lax" : "none", // when use cross site,
   });
 };
