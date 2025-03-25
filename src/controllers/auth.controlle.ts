@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { setCookie } from "../helper/cookies";
 import { successResponse } from "../helper/response-handler";
 import { loginService, registerService } from "../services/auth.service";
 import { RequestWithUser } from "../types/types";
@@ -23,18 +22,18 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const { token, user } = await loginService(email, password);
 
   // cookies set
-  setCookie({
-    res,
-    cookieName: "token",
-    cookieValue: await token,
-    maxAge: 3600 * 24 * 7,
-  });
+  // setCookie({
+  //   res,
+  //   cookieName: "token",
+  //   cookieValue: await token,
+  //   maxAge: 3600 * 24 * 7,
+  // });
 
   successResponse(res, {
     statusCode: 200,
     message: "Successfully Login",
     payload: {
-      token,
+      token: await token,
       user: user,
     },
   });

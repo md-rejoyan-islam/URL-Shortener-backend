@@ -32,7 +32,7 @@ export const loginService = async (email: string, password: string) => {
   const token = createJWT(
     { username: user.username, email: user.email },
     jwtSecret,
-    3600
+    60
   );
 
   return { token, user };
