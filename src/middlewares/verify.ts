@@ -11,11 +11,11 @@ import { RequestWithUser } from "../types/types";
 
 export const isLoggedIn = asyncHandler(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization; // direct access token from header
+    const authHeader = req.headers.authorization;
 
-    const headerToken = authHeader?.split(" ")[1]; // direct access token from header
+    const headerToken = authHeader?.split(" ")[1];
 
-    const token: string = req?.cookies?.token || headerToken; // direct access token from cookie
+    const token: string = req?.cookies?.token || headerToken;
 
     if (!token) {
       throw createError(

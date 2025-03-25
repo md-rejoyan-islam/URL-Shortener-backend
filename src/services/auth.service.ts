@@ -1,5 +1,5 @@
 import createError from "http-errors";
-import { jwtSecret } from "../config/secret";
+import { jwtExpiresIn, jwtSecret } from "../config/secret";
 import createJWT from "../helper/create-jwt";
 import hashedPassword, { isMatchedPassword } from "../helper/hash-password";
 import userModel from "../models/user.model";
@@ -32,7 +32,7 @@ export const loginService = async (email: string, password: string) => {
   const token = createJWT(
     { username: user.username, email: user.email },
     jwtSecret,
-    60
+    jwtExpiresIn
   );
 
   return { token, user };
