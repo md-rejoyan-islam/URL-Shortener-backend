@@ -9,7 +9,11 @@ const verifyJwtTokenAndPassed = (
   _res: Response,
   next: NextFunction
 ) => {
-  const token: string = req?.cookies?.token;
+  const authHeader = req.headers.authorization;
+
+  const headerToken = authHeader?.split(" ")[1];
+
+  const token: string = req?.cookies?.token || headerToken;
 
   if (!token) {
     return next();

@@ -1,4 +1,3 @@
-import { log } from "console";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
@@ -30,7 +29,6 @@ export const getAllUrls = asyncHandler(
 
 export const createShortUrl = asyncHandler(
   async (req: RequestWithUser, res: Response) => {
-    log("req" + req?.me);
     const url = await createShortUrlService(
       req.body.originalUrl,
       req.body.customAlias,
