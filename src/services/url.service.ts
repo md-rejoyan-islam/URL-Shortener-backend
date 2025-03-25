@@ -29,8 +29,6 @@ export const createShortUrlService = async (
   }
 
   if (customAlias) {
-    console.log("customAlias" + customAlias);
-
     const exist = await urlModel.exists({ shortId: customAlias });
 
     if (exist) {
