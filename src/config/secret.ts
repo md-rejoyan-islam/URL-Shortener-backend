@@ -12,7 +12,7 @@ export const corsWhitelist: string[] = (CORS_WHITELIST || "").split(",");
 
 export const jwtSecret: string = process.env.JWT_SECRET || "secret";
 
-export const nodeEnv: string = process.env.NODE_ENV || "development";
+export const nodeEnv: string = process.env.NODE_ENV || "production";
 
 export const serverUrl: string =
-  process.env.SERVER_URL || "http://localhost:5080";
+  process.env.SERVER_URL || "https://url-shortener-server-hpvc.onrender.com";
