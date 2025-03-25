@@ -1,11 +1,12 @@
 import { Response } from "express";
-import { nodeEnv } from "../config/secret";
 
 // clear cookie
 export const clearCookie = (res: Response, cookieName: string) => {
   res.clearCookie(cookieName, {
-    secure: nodeEnv === "production",
-    sameSite: nodeEnv === "production" ? "none" : "lax",
+    secure: true,
+    sameSite: "none",
+    // secure: nodeEnv === "production",
+    // sameSite: nodeEnv === "production" ? "none" : "lax",
     // sameSite: nodeEnv === "development" ? "strict" : "none",
     httpOnly: true,
   });
@@ -26,8 +27,9 @@ export const setCookie = ({
   res.cookie(cookieName, cookieValue, {
     httpOnly: true,
     maxAge,
-    secure: nodeEnv === "production", // only https
-    // sameSite: "lax", // when use cross site
-    sameSite: nodeEnv === "development" ? "lax" : "none", // when use cross site,
+    secure: true, // only https
+    // secure: nodeEnv === "production", // only https
+    sameSite: "none", // when use cross site
+    // sameSite: nodeEnv === "development" ? "lax" : "none", // when use cross site,
   });
 };
