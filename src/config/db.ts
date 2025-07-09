@@ -7,10 +7,8 @@ const connectDB = async () => {
     const connect = await mongoose.connect(mongoUri, {
       connectTimeoutMS: 3000,
     });
-
     logger.info(`MongoDB Connected to database: ${connect.connection.name}`);
   } catch (error) {
-    console.error("Error: ", error);
     if (error instanceof Error) {
       console.error(`Error: ${error.message}`);
     } else {

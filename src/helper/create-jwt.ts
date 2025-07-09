@@ -1,12 +1,7 @@
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
-import { errorLogger } from "./logger";
 
-const createJWT = async (
-  payload: any,
-  secretKey: string,
-  expiresIn: number
-) => {
+const createJWT = (payload: any, secretKey: string, expiresIn: number) => {
   try {
     // payload check
     if (typeof payload !== "object" || !payload) {
@@ -23,7 +18,12 @@ const createJWT = async (
       expiresIn,
     });
   } catch (error) {
-    errorLogger.error(error);
+    let errorMessage = "Internal Server Error";
+    if (error && typeof error === "object" && "message" in error) {
+      errorMessage = (error as { message: string }).message;
+    }
+
+    throw createError(500, errorMessage);
   }
 };
 

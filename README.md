@@ -1,4 +1,4 @@
-# URL Shortener Backend
+# URL Shortener API
 
 ✂️ A simple, fast, and efficient URL shortening service built with Node.js and Express.
 

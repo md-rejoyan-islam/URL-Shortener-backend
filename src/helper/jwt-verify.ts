@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config/secret";
 import userModel from "../models/user.model";
-import { RequestWithUser, User } from "../types/types";
+import { RequestWithUser } from "../types/types";
 import { clearCookie } from "./cookies";
 import { errorResponse } from "./response-handler";
 
@@ -42,9 +42,8 @@ export const verifyJwtTokenWithNext = (
 
     req.me = {
       email: loginUser.email,
-      username: loginUser.username,
-      id: loginUser?._id.toString(),
-    } as User;
+      _id: loginUser?._id,
+    };
 
     next();
   });

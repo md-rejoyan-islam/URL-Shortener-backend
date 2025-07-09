@@ -4,10 +4,8 @@ dotenv.config();
 import { CorsOptions } from "cors";
 import { corsWhitelist } from "./secret";
 
-// whitelist is an array of URLs that are allowed to access the API
 const whitelist = corsWhitelist;
 
-// corsOptions is an object with a function that checks if the origin is in the whitelist
 const corsOptions: CorsOptions = {
   origin: function (
     origin: string | undefined,
@@ -21,6 +19,7 @@ const corsOptions: CorsOptions = {
   },
   optionsSuccessStatus: 200,
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 };
 
 // export the corsOptions object

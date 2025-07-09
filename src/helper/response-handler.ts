@@ -13,7 +13,6 @@ export const errorResponse = (
     errors?: any;
   }
 ) => {
-  // log error
   errorLogger.error(message);
 
   return res.status(statusCode).json({

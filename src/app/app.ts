@@ -1,19 +1,19 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
-import morgan from "morgan";
+import express, { Application } from "express";
 import corsOptions from "../config/cors-options";
-import connectDB from "../config/db";
-import { port } from "../config/secret";
 import route from "./routes";
 
-const app = express();
+const app: Application = express();
 
-app.use(morgan("dev"));
+// middleware for logging in development mode
+if (process.env.NODE_ENV === "development") {
+  app.use(require("morgan")("dev"));
+}
 
 // middleware
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors(corsOptions));
 
@@ -23,7 +23,5 @@ app.use(cookieParser());
 // routes
 app.use(route);
 
-app.listen(port, () => {
-  connectDB();
-  console.log(`Server is running on http://localhost:${port}`);
-});
+// exporting the app
+export default app;

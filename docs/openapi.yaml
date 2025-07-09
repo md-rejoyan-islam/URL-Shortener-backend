@@ -1,0 +1,201 @@
+openapi: 3.1.0
+info:
+  title: URL Shortener API
+  description: A simple API for shortening URLs
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: User registered successfully
+  /auth/login:
+    post:
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Successfully logged in
+  /auth/me:
+    get:
+      summary: Get the logged in user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logged in user details
+  /auth/forgot-password:
+    post:
+      summary: Forgot password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        "200":
+          description: Password reset link sent to your email
+  /auth/reset-password:
+    post:
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Password reset successfully
+  /urls:
+    get:
+      summary: Get all URLs for the logged in user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: URLs fetched successfully
+    post:
+      summary: Create a new short URL
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                originalUrl:
+                  type: string
+                customAlias:
+                  type: string
+      responses:
+        "201":
+          description: Short URL created successfully
+  /urls/analytics:
+    get:
+      summary: Get URL analytics
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: URL analytics
+  /urls/{shortUrl}:
+    get:
+      summary: Get a single short URL
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: shortUrl
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Short URL fetched successfully
+    patch:
+      summary: Update a short URL
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: shortUrl
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                originalUrl:
+                  type: string
+                shortUrl:
+                  type: string
+      responses:
+        "200":
+          description: URL updated successfully
+  /urls/{id}:
+    delete:
+      summary: Delete a short URL
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: URL deleted successfully
+  /seeds/users:
+    get:
+      summary: Seed users
+      responses:
+        "200":
+          description: Users seeded successfully
+  /seeds/urls:
+    get:
+      summary: Seed URLs
+      responses:
+        "200":
+          description: URLs seeded successfully
+  /{shortId}:
+    get:
+      summary: Redirect to the original URL
+      parameters:
+        - name: shortId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirects to the original URL
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

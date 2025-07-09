@@ -1,7 +1,13 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { successResponse } from "../helper/response-handler";
-import { loginService, registerService } from "../services/auth.service";
+import {
+  forgotPasswordService,
+  loginService,
+  meService,
+  registerService,
+  resetPasswordService,
+} from "../services/auth.service";
 import { RequestWithUser } from "../types/types";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
@@ -33,14 +39,14 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     statusCode: 200,
     message: "Successfully Login",
     payload: {
-      token: await token,
+      token: token,
       user: user,
     },
   });
 });
 
 export const me = asyncHandler(async (req: RequestWithUser, res: Response) => {
-  const user = req?.me;
+  const user = await meService(req?.me?.email);
 
   successResponse(res, {
     statusCode: 200,
@@ -50,3 +56,32 @@ export const me = asyncHandler(async (req: RequestWithUser, res: Response) => {
     },
   });
 });
+
+export const forgotPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const { protocol, host } = req;
+    const resetLink = await forgotPasswordService(email, protocol, host);
+
+    successResponse(res, {
+      statusCode: 200,
+      message: "Password reset link sent to your email",
+      payload: {
+        data: resetLink,
+      },
+    });
+  }
+);
+
+export const resetPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { token, password } = req.body;
+
+    await resetPasswordService(password, token);
+
+    successResponse(res, {
+      statusCode: 200,
+      message: "Password reset successfully",
+    });
+  }
+);

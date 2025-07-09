@@ -1,4 +1,6 @@
-const isAuthorized = (userId: string, loginUserId: string) => {
+import { Types } from "mongoose";
+
+const isAuthorized = (userId: Types.ObjectId, loginUserId: Types.ObjectId) => {
   if (userId !== loginUserId) {
     return false;
   }

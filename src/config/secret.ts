@@ -2,22 +2,34 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { PORT, MONGO_URI, CORS_WHITELIST } = process.env;
+const {
+  PORT,
+  MONGO_URI,
+  CORS_WHITELIST,
+  SERVER_URL,
+  JWT_SECRET,
+  NODE_ENV,
+  JWT_EXPIRES_IN,
+  CLIENT_URL,
+  QR_GENERATOR_URL,
+} = process.env;
 
-export const port: number = +(PORT || 5000);
+export const port: number = +PORT!;
 
 export const mongoUri: string = MONGO_URI || "";
 
-export const corsWhitelist: string[] = (CORS_WHITELIST || "").split(",");
+export const corsWhitelist: string[] = CORS_WHITELIST!.split(",");
 
-export const jwtSecret: string = process.env.JWT_SECRET || "secret";
+export const jwtSecret: string = JWT_SECRET!;
 
-export const nodeEnv: string = process.env.NODE_ENV || "production";
+export const nodeEnv: string = NODE_ENV!;
 
-export const serverUrl: string =
-  process.env.SERVER_URL || "https://url-shortener-server-hmoq.onrender.com";
+export const serverUrl: string = SERVER_URL!;
 
-export const jwtExpiresIn: number = +(process.env.JWT_EXPIRES_IN || 2592000);
+export const jwtExpiresIn: number = +JWT_EXPIRES_IN!;
 
-export const clientUrl =
-  process.env.CLIENT_URL || "https://url-shortener-cliient-app.vercel.app";
+export const clientUrl: string = CLIENT_URL!;
+
+export const qrGeneratorUrl: string = QR_GENERATOR_URL!;
+
+export const passwordResetTokenExpiration: number = 600; // 10 minutes

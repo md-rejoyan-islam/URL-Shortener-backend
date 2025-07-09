@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config/secret";
 import userModel from "../models/user.model";
-import { RequestWithUser, User } from "../types/types";
+import { IUser, RequestWithUser } from "../types/types";
 
 const verifyJwtTokenAndPassed = (
   req: RequestWithUser,
@@ -29,7 +29,7 @@ const verifyJwtTokenAndPassed = (
     });
 
     if (loginUser) {
-      req.me = { ...loginUser, id: loginUser?._id.toString() } as User;
+      req.me = loginUser as IUser;
     }
 
     next();

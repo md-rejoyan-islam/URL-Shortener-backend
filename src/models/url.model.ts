@@ -1,26 +1,23 @@
-import mongoose from "mongoose";
-import { serverUrl } from "../config/secret";
+import mongoose, { Schema } from "mongoose";
+import { qrGeneratorUrl, serverUrl } from "../config/secret";
+import { IUrl } from "../types/types";
 
-const urlSchema = new mongoose.Schema(
+const urlSchema = new Schema<IUrl>(
   {
     originalUrl: {
       type: String,
-      required: true,
+      required: [true, "Original URL is required"],
     },
     shortId: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, "Short ID is required"],
+      unique: [true, "Short ID must be unique"],
+      minlength: [3, "Short ID must be at least 3 characters long"],
     },
     shortUrl: {
       type: String,
-      required: true,
-      unique: true,
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
+      required: [true, "Short URL is required"],
+      unique: [true, "Short URL must be unique"],
     },
     qrCodeUrl: {
       type: String,
@@ -38,7 +35,7 @@ const urlSchema = new mongoose.Schema(
           longitude: { type: Number },
         },
         device: {
-          type: { type: String }, // mobile, desktop, tablet
+          type: { type: String },
           os: { type: String },
           browser: { type: String },
         },
@@ -47,6 +44,11 @@ const urlSchema = new mongoose.Schema(
         },
       },
     ],
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -54,11 +56,11 @@ const urlSchema = new mongoose.Schema(
 );
 
 // pre save hook to generate qr code url
-urlSchema.pre("save", function (next) {
-  this.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${
-    serverUrl + "/" + this.shortId
-  }`;
+urlSchema.pre<IUrl>("save", function (next) {
+  this.qrCodeUrl = `${qrGeneratorUrl}${serverUrl + "/" + this.shortId}`;
   next();
 });
 
-export default mongoose.model("Url", urlSchema);
+const urlModl = mongoose.model<IUrl>("Url", urlSchema);
+
+export default urlModl;

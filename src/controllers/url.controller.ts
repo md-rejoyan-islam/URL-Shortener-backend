@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { successResponse } from "../helper/response-handler";
 import urlModel from "../models/url.model";
 import {
@@ -15,7 +15,7 @@ import { RequestWithUser } from "../types/types";
 
 export const getAllUrls = asyncHandler(
   async (req: RequestWithUser, res: Response) => {
-    const urls = await getAllUrlsService(req?.me?.id);
+    const urls = await getAllUrlsService(req?.me?._id);
 
     successResponse(res, {
       statusCode: 200,
@@ -32,7 +32,7 @@ export const createShortUrl = asyncHandler(
     const url = await createShortUrlService(
       req.body.originalUrl,
       req.body.customAlias,
-      req?.me?.id
+      req?.me?._id
     );
 
     successResponse(res, {
@@ -48,7 +48,7 @@ export const createShortUrl = asyncHandler(
 export const getSingleShortUrl = asyncHandler(
   async (req: RequestWithUser, res: Response) => {
     const { shortUrl } = req.params;
-    const url = await getSingleShortUrlService(shortUrl, req?.me?.id);
+    const url = await getSingleShortUrlService(shortUrl, req?.me?._id);
 
     successResponse(res, {
       statusCode: 200,
@@ -61,8 +61,6 @@ export const getSingleShortUrl = asyncHandler(
 );
 
 export const redirectUrl = asyncHandler(async (req: Request, res: Response) => {
-  console.log(req.params);
-
   const url = await redirectUrlService(req);
 
   res.redirect(url);
@@ -72,7 +70,7 @@ export const deleteUrl = asyncHandler(
   async (req: RequestWithUser, res: Response) => {
     const { id } = req.params;
 
-    const url = await deleteUrlService(id, req?.me?.id);
+    const url = await deleteUrlService(new Types.ObjectId(id), req?.me?._id);
 
     successResponse(res, {
       statusCode: 200,
@@ -93,7 +91,7 @@ export const updateUrl = asyncHandler(
       url,
       shortUrl,
       originalUrl,
-      req?.me?.id
+      req?.me?._id
     );
     successResponse(res, {
       statusCode: 200,
@@ -107,7 +105,7 @@ export const updateUrl = asyncHandler(
 
 export const anlytics = asyncHandler(
   async (req: RequestWithUser, res: Response) => {
-    const userId = req?.me?.id;
+    const userId = req?.me?._id;
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
 

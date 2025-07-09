@@ -4,9 +4,8 @@
   "description": "",
   "main": "src/app/app.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/app/app.ts",
-    "start": "node dist/app/app.js",
+    "dev": "nodemon src/server.ts",
+    "start": "node dist/server.js",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
@@ -17,6 +16,8 @@
   "type": "commonjs",
   "dependencies": {
     "@types/geoip-lite": "^1.4.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -28,8 +29,11 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
     "morgan": "^1.10.0",
+    "swagger-ui-express": "^5.0.1",
+    "typescript-eslint": "^8.36.0",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
